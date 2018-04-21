@@ -1,4 +1,4 @@
 rootProject.name = 'geode-univ-sample'
 
-include 'applications/univ'
-include 'applications/models'
+include ':univ'
+include ':model'
