@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions
 import org.springframework.data.gemfire.config.annotation.EnablePdx
+import org.springframework.data.gemfire.config.annotation.EnableSecurity
 import org.springframework.data.gemfire.repository.config.EnableGemfireRepositories
 import org.springframework.data.web.config.EnableSpringDataWebSupport
 
@@ -25,6 +26,7 @@ class GeodeApp
         clientRegionShortcut = ClientRegionShortcut.PROXY)
 @EnableGemfireRepositories
 @EnablePdx
+@EnableSecurity
 class GemfireConfig
 
 fun main(args: Array<String>) {

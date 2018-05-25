@@ -2,9 +2,12 @@ package org.bk.univ
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.whenever
+import io.vavr.control.Try
+import org.bk.univ.exceptions.EntityNotFoundException
 import org.bk.univ.model.Teacher
 import org.bk.univ.service.TeacherService
 import org.bk.univ.web.TeacherController
+import org.bk.univ.web.WebExceptionHandler
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,14 +19,18 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.util.*
+import java.util.Optional
 
 
 @RunWith(SpringRunner::class)
-@WebMvcTest(TeacherController::class)
+@WebMvcTest(controllers = [TeacherController::class, WebExceptionHandler::class])
 class TeacherControllerTest {
 
     @Autowired
@@ -116,5 +123,23 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teachers/teacher-id"))
                 .andExpect(status().isOk)
                 .andExpect(content().json("{\n  \"teacherId\": \"teacher-id\",\n  \"name\": \"Teacher1\",\n  \"department\": \"department1\"\n}"))
+    }
+
+    @Test
+    fun deleteATeacher() {
+        whenever(teacherService.deleteTeacher("teacher-id")).thenReturn(Try.ofSupplier { true });
+        
+        mockMvc.perform(delete("/teachers/teacher-id"))
+                .andExpect(status().isAccepted)
+    }
+    
+    @Test
+    fun deleteANonExistentTeacher() {
+        whenever(teacherService.deleteTeacher("teacher-id")).thenReturn(Try.failure(EntityNotFoundException("Not found!!")));
+
+        mockMvc.perform(delete("/teachers/teacher-id"))
+                .andDo { print() }
+                .andExpect(status().is4xxClientError)
+                .andExpect(content().json("[{\"logref\":\"Error\",\"message\":\"Not found!!\",\"links\":[]}]"))
     }
 }

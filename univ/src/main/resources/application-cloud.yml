@@ -1,0 +1,8 @@
+spring:
+  data:
+    gemfire:
+      pool:
+        locators: ${vcap.services.testpcc.credentials.locators}
+      security:
+        username: ${vcap.services.testpcc.credentials.users[0].username}
+        password: ${vcap.services.testpcc.credentials.users[0].password}

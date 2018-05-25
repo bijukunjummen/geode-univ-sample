@@ -1,5 +1,7 @@
 package org.bk.univ.web
 
+import io.vavr.API
+import io.vavr.Predicates
 import org.bk.univ.model.Teacher
 import org.bk.univ.service.TeacherService
 import org.slf4j.Logger
@@ -38,4 +40,10 @@ class TeacherController(val teacherService: TeacherService) {
         teacherService.findTeacher(teacherId)
                 .map { teacher -> ResponseEntity.ok(teacher) }
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build())
+
+    @RequestMapping(value="/{teacherId}", method = [RequestMethod.DELETE])
+    fun deleteTeacher(@PathVariable("teacherId") teacherId: String): ResponseEntity<*> =
+            teacherService.deleteTeacher(teacherId)
+                    .map { _ -> ResponseEntity.accepted().body("") }
+                    .get()
 }
