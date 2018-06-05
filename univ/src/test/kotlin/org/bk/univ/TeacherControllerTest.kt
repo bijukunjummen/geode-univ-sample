@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDateTime
 import java.util.Optional
 
 
@@ -42,13 +43,13 @@ class TeacherControllerTest {
     @Test
     fun getAListOfTeachers() {
         val page1: Page<Teacher> = PageImpl(listOf(
-                Teacher("1", "name1", "dep1"),
-                Teacher("2", "name2", "dep2")
+                Teacher("1", "name1", "dep1", 25, LocalDateTime.now(), LocalDateTime.now()),
+                Teacher("2", "name2", "dep2", 25, LocalDateTime.now(), LocalDateTime.now())
         ), PageRequest.of(0, 2), 4)
 
         val page2: Page<Teacher> = PageImpl(listOf(
-                Teacher("10", "name10", "dep10"),
-                Teacher("20", "name20", "dep20")
+                Teacher("10", "name10", "dep10", 25, LocalDateTime.now(), LocalDateTime.now()),
+                Teacher("20", "name20", "dep20", 25, LocalDateTime.now(), LocalDateTime.now())
         ), PageRequest.of(1, 2), 4)
 
         whenever(teacherService.findTeachers(any())).thenReturn(page1)
@@ -97,7 +98,7 @@ class TeacherControllerTest {
     fun saveATeacher() {
         whenever(teacherService.save(any())).thenAnswer({invocation -> 
             val teacher:Teacher = invocation.getArgument(0)
-            Teacher("teacher-id", teacher.name, teacher.department)
+            Teacher("teacher-id", teacher.name, teacher.department, teacher.age, teacher.joinedDate, teacher.retirementDate)
         })
         mockMvc.perform(post("/teachers").contentType(MediaType.APPLICATION_JSON)
                 .content("{\n  \"name\": \"Teacher1\",\n  \"department\": \"department1\"\n}"))
@@ -109,7 +110,7 @@ class TeacherControllerTest {
     fun updateATeacher() {
         whenever(teacherService.update(any())).thenAnswer({invocation ->
             val teacher:Teacher = invocation.getArgument(0)
-            Optional.of(Teacher(teacher.teacherId, teacher.name, teacher.department))
+            Optional.of(Teacher(teacher.teacherId, teacher.name, teacher.department, teacher.age, teacher.joinedDate, teacher.retirementDate))
         })
         mockMvc.perform(put("/teachers/someid").contentType(MediaType.APPLICATION_JSON)
                 .content("{\n  \"name\": \"Teacher1\",\n  \"department\": \"department1\"\n}"))
@@ -119,7 +120,7 @@ class TeacherControllerTest {
 
     @Test
     fun findATeacher() {
-        whenever(teacherService.findTeacher("teacher-id")).thenReturn(Optional.of(Teacher("teacher-id", "Teacher1", "department1")))
+        whenever(teacherService.findTeacher("teacher-id")).thenReturn(Optional.of(Teacher("teacher-id", "Teacher1", "department1", 25, LocalDateTime.now(), LocalDateTime.now())))
         mockMvc.perform(get("/teachers/teacher-id"))
                 .andExpect(status().isOk)
                 .andExpect(content().json("{\n  \"teacherId\": \"teacher-id\",\n  \"name\": \"Teacher1\",\n  \"department\": \"department1\"\n}"))
