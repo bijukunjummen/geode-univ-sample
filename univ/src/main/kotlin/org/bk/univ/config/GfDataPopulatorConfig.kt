@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.LocalDateTime
+import java.util.Optional
 
 @Configuration
 class GfDataPopulatorConfig {
@@ -18,7 +19,8 @@ class GfDataPopulatorConfig {
                 val retirementYear = joinYear + 30
                 val joinedDate = LocalDateTime.parse("$joinYear-01-01T00:00:00")
                 val retirementDate = LocalDateTime.parse("$retirementYear-01-01T00:00:00")
-                teacherService.save(Teacher("id-$i", "name-$i", "department-$i", 20 + (i % 20), joinedDate, retirementDate))
+                teacherService.save(Teacher("id-$i", "name-$i", "department-$i", 20 + (i % 20), 
+                        Optional.of(joinedDate), Optional.of(retirementDate)))
             }
         }
     }

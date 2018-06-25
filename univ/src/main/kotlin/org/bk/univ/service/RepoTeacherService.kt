@@ -30,9 +30,9 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
                         it.id,
                         it.name,
                         it.department,
-                        teacher.age,
-                        DateTimeUtils.toDatetime(it.joinedDate),
-                        DateTimeUtils.toDatetime(it.retirementDate)
+                        it.age,
+                        Optional.ofNullable(it.joinedDate).map { DateTimeUtils.toDatetime(it) },
+                        Optional.ofNullable(it.retirementDate).map { DateTimeUtils.toDatetime(it) }
                 )
             }
         } else {
@@ -47,8 +47,9 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
                         entity.name,
                         entity.department,
                         entity.age,
-                        DateTimeUtils.toDatetime(entity.joinedDate),
-                        DateTimeUtils.toDatetime(entity.retirementDate))
+                        Optional.ofNullable(entity.joinedDate).map { DateTimeUtils.toDatetime(it) },
+                        Optional.ofNullable(entity.retirementDate).map{DateTimeUtils.toDatetime(it)}
+                )
             }
 
     override fun save(teacher: Teacher): Teacher {
@@ -58,14 +59,15 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
                         teacher.name,
                         teacher.department,
                         teacher.age,
-                        DateTimeUtils.toDate(teacher.joinedDate),
-                        DateTimeUtils.toDate(teacher.retirementDate)))
+                        teacher.joinedDate.map { DateTimeUtils.toDate(it) }.orElse(null),
+                        teacher.retirementDate.map {DateTimeUtils.toDate(it)}.orElse(null)
+                ))
         return Teacher(savedEntity.id,
                 savedEntity.name,
                 savedEntity.department,
                 savedEntity.age,
-                DateTimeUtils.toDatetime(savedEntity.joinedDate),
-                DateTimeUtils.toDatetime(savedEntity.retirementDate)
+                Optional.ofNullable(savedEntity.joinedDate).map { DateTimeUtils.toDatetime(it) },
+                Optional.ofNullable(savedEntity.retirementDate).map{DateTimeUtils.toDatetime(it)}
         )
     }
 
@@ -76,8 +78,8 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
                     entity.name, 
                     entity.department, 
                     entity.age,
-                    DateTimeUtils.toDatetime(entity.joinedDate),
-                    DateTimeUtils.toDatetime(entity.retirementDate)
+                    Optional.ofNullable(entity.joinedDate).map { DateTimeUtils.toDatetime(it) },
+                    Optional.ofNullable(entity.retirementDate).map { DateTimeUtils.toDatetime(it) }
             ) })
     }
 }

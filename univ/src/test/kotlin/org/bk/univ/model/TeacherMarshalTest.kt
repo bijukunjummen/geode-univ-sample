@@ -1,28 +1,29 @@
 package org.bk.univ.model
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
-import org.springframework.test.context.junit4.SpringRunner
-import java.time.LocalDateTime
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @JsonTest
 class TeacherMarshalTest {
 
     @Autowired
-    lateinit var jacksonTester: JacksonTester<Teacher>
+    lateinit var jsonTester: JacksonTester<Teacher>
 
     @Test
     fun testMarshalToJson() {
-        val teacher = Teacher("teacher-id", "name1", "department1", 25, LocalDateTime.now(), LocalDateTime.now())
-        assertThat(jacksonTester.write(teacher)).isEqualToJson("{\n  \"teacherId\": \"teacher-id\",\n  \"name\": \"name1\",\n  \"department\": \"department1\"\n}")
+        val teacher = Teacher("teacher-id", "name1", "department1", 25)
+        println(jsonTester.write(teacher))
+        assertThat(jsonTester.write(teacher)).isEqualToJson("{\n  \"teacherId\": \"teacher-id\",\n  \"name\": \"name1\",\n  \"department\": \"department1\"\n}")
 
-        assertThat(jacksonTester
-                .parseObject("{\n  \"teacherId\": \"teacher-id\",\n  \"name\": \"name1\",\n  \"department\": \"department1\"\n}"))
-                .isEqualTo(teacher)
+        assertThat(jsonTester
+                .parseObject("{\n  \"teacherId\": \"teacher-id\",\n  \"name\": \"name1\",\n  \"department\": \"department1\",\n  \"joinedDate\":\"2018-06-25T14:30:39.949\",\n  \"retirementDate\":\"2018-06-25T14:30:39.95\"  \n}"))
+                .hasFieldOrPropertyWithValue("teacherId", "teacher-id")
+                .hasFieldOrPropertyWithValue("name", "name1")
     }
 }

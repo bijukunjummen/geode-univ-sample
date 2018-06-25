@@ -8,8 +8,8 @@ import org.bk.univ.model.Teacher
 import org.bk.univ.service.TeacherService
 import org.bk.univ.web.TeacherController
 import org.bk.univ.web.WebExceptionHandler
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -17,7 +17,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -30,7 +30,7 @@ import java.time.LocalDateTime
 import java.util.Optional
 
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @WebMvcTest(controllers = [TeacherController::class, WebExceptionHandler::class])
 class TeacherControllerTest {
 
@@ -43,13 +43,13 @@ class TeacherControllerTest {
     @Test
     fun getAListOfTeachers() {
         val page1: Page<Teacher> = PageImpl(listOf(
-                Teacher("1", "name1", "dep1", 25, LocalDateTime.now(), LocalDateTime.now()),
-                Teacher("2", "name2", "dep2", 25, LocalDateTime.now(), LocalDateTime.now())
+                Teacher("1", "name1", "dep1", 25, Optional.of(LocalDateTime.now()), Optional.of(LocalDateTime.now())),
+                Teacher("2", "name2", "dep2", 25, Optional.of(LocalDateTime.now()), Optional.of(LocalDateTime.now()))
         ), PageRequest.of(0, 2), 4)
 
         val page2: Page<Teacher> = PageImpl(listOf(
-                Teacher("10", "name10", "dep10", 25, LocalDateTime.now(), LocalDateTime.now()),
-                Teacher("20", "name20", "dep20", 25, LocalDateTime.now(), LocalDateTime.now())
+                Teacher("10", "name10", "dep10", 25, Optional.of(LocalDateTime.now()), Optional.of(LocalDateTime.now())),
+                Teacher("20", "name20", "dep20", 25, Optional.of(LocalDateTime.now()), Optional.of(LocalDateTime.now()))
         ), PageRequest.of(1, 2), 4)
 
         whenever(teacherService.findTeachers(any())).thenReturn(page1)
@@ -96,8 +96,8 @@ class TeacherControllerTest {
 
     @Test
     fun saveATeacher() {
-        whenever(teacherService.save(any())).thenAnswer({invocation -> 
-            val teacher:Teacher = invocation.getArgument(0)
+        whenever(teacherService.save(any())).thenAnswer({ invocation ->
+            val teacher: Teacher = invocation.getArgument(0)
             Teacher("teacher-id", teacher.name, teacher.department, teacher.age, teacher.joinedDate, teacher.retirementDate)
         })
         mockMvc.perform(post("/teachers").contentType(MediaType.APPLICATION_JSON)
@@ -108,8 +108,8 @@ class TeacherControllerTest {
 
     @Test
     fun updateATeacher() {
-        whenever(teacherService.update(any())).thenAnswer({invocation ->
-            val teacher:Teacher = invocation.getArgument(0)
+        whenever(teacherService.update(any())).thenAnswer({ invocation ->
+            val teacher: Teacher = invocation.getArgument(0)
             Optional.of(Teacher(teacher.teacherId, teacher.name, teacher.department, teacher.age, teacher.joinedDate, teacher.retirementDate))
         })
         mockMvc.perform(put("/teachers/someid").contentType(MediaType.APPLICATION_JSON)
@@ -120,7 +120,7 @@ class TeacherControllerTest {
 
     @Test
     fun findATeacher() {
-        whenever(teacherService.findTeacher("teacher-id")).thenReturn(Optional.of(Teacher("teacher-id", "Teacher1", "department1", 25, LocalDateTime.now(), LocalDateTime.now())))
+        whenever(teacherService.findTeacher("teacher-id")).thenReturn(Optional.of(Teacher("teacher-id", "Teacher1", "department1", 25, Optional.of(LocalDateTime.now()), Optional.of(LocalDateTime.now()))))
         mockMvc.perform(get("/teachers/teacher-id"))
                 .andExpect(status().isOk)
                 .andExpect(content().json("{\n  \"teacherId\": \"teacher-id\",\n  \"name\": \"Teacher1\",\n  \"department\": \"department1\"\n}"))
@@ -129,11 +129,11 @@ class TeacherControllerTest {
     @Test
     fun deleteATeacher() {
         whenever(teacherService.deleteTeacher("teacher-id")).thenReturn(Try.ofSupplier { true });
-        
+
         mockMvc.perform(delete("/teachers/teacher-id"))
                 .andExpect(status().isAccepted)
     }
-    
+
     @Test
     fun deleteANonExistentTeacher() {
         whenever(teacherService.deleteTeacher("teacher-id")).thenReturn(Try.failure(EntityNotFoundException("Not found!!")));
