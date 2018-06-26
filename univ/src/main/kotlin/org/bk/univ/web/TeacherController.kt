@@ -21,8 +21,8 @@ class TeacherController(val teacherService: TeacherService) {
     private val logger: Logger = LoggerFactory.getLogger(TeacherController::class.java)
     
     @RequestMapping(method = [RequestMethod.GET])
-    fun listTeachers(page: Pageable): Page<Teacher> = 
-            teacherService.findTeachers(page)
+    fun listTeachers(): List<Teacher> = 
+            teacherService.findTeachers()
     
     @RequestMapping(method = [RequestMethod.POST])
     fun saveTeacher(@RequestBody teacher: Teacher): ResponseEntity<Teacher>  {

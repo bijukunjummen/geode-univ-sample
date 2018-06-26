@@ -50,6 +50,7 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-reflect")
     compile("org.springframework.data:spring-data-geode")
     compile("org.springframework.hateoas:spring-hateoas")
+    compile("io.projectreactor:reactor-core")
     compile("io.vavr:vavr:0.9.2")
     compile(project(":model"))
     testCompile('org.springframework.boot:spring-boot-starter-test') {

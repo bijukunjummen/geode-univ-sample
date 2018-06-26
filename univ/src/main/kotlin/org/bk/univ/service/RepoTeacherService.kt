@@ -17,15 +17,15 @@ import java.util.UUID
 class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
     override fun deleteTeacher(teacherid: String): Try<Boolean> =
             teacherRepo.findById(teacherid)
-                    .map({ teacher ->
+                    .map { teacher ->
                         teacherRepo.delete(teacher)
-                    }).map { Try.ofSupplier { true } }.orElse(Try.failure(EntityNotFoundException("Teacher with id: $teacherid, not found")))
+                    }.map { Try.ofSupplier { true } }.orElse(Try.failure(EntityNotFoundException("Teacher with id: $teacherid, not found")))
 
 
     override fun update(teacher: Teacher): Optional<Teacher> {
         val teacherId = teacher.teacherId
-        if (teacherId != null) {
-            return teacherRepo.findById(teacherId).map {
+        return if (teacherId != null) {
+            teacherRepo.findById(teacherId).map {
                 Teacher(
                         it.id,
                         it.name,
@@ -36,7 +36,7 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
                 )
             }
         } else {
-            return Optional.empty()
+            Optional.empty()
         }
     }
 
@@ -53,7 +53,7 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
             }
 
     override fun save(teacher: Teacher): Teacher {
-        teacher.teacherId = teacher.teacherId?:UUID.randomUUID().toString()
+        teacher.teacherId = teacher.teacherId ?: UUID.randomUUID().toString()
         val savedEntity = teacherRepo.save(
                 TeacherEntity(teacher.teacherId,
                         teacher.name,
@@ -71,9 +71,9 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
         )
     }
 
-    override fun findTeachers(page: Pageable): Page<Teacher> {
+    override fun findTeachers(): List<Teacher> {
         val teacherEntities = teacherRepo.findAll()
-        return PageImpl(teacherEntities.map { entity ->
+        return (teacherEntities.map { entity ->
             Teacher(entity.id,
                     entity.name,
                     entity.department,
@@ -81,6 +81,6 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
                     entity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
                     entity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
             )
-        })
+        }).toList()
     }
 }
