@@ -5,6 +5,7 @@ import org.apache.geode.cache.client.ClientCache
 import org.apache.geode.cache.query.CqAttributesFactory
 import org.bk.univ.listener.FluxSinkRegionListener
 import org.bk.univ.listener.TeacherRegionListener
+import org.bk.univ.model.CourseEntity
 import org.bk.univ.model.Teacher
 import org.bk.univ.model.TeacherEntity
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +32,7 @@ class GeodeApp
 
 @Configuration
 @ClientCacheApplication(subscriptionEnabled = true)
-@EnableEntityDefinedRegions(basePackageClasses = [TeacherEntity::class])
+@EnableEntityDefinedRegions(basePackageClasses = [TeacherEntity::class, CourseEntity::class])
 @EnableGemfireRepositories
 @EnablePdx
 class GemfireConfig {

@@ -9,11 +9,13 @@ public class CourseEntity {
     private final String courseCode;
     private final String name;
     private final String description;
+    private final String teacherId;
 
-    public CourseEntity(String courseCode, String name, String description) {
+    public CourseEntity(String courseCode, String name, String description, String teacherId) {
         this.courseCode = courseCode;
         this.name = name;
         this.description = description;
+        this.teacherId = teacherId;
     }
 
     public String getCourseCode() {
@@ -26,5 +28,9 @@ public class CourseEntity {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getTeacherId() {
+        return teacherId;
     }
 }

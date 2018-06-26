@@ -6,9 +6,6 @@ import org.bk.univ.exceptions.EntityNotFoundException
 import org.bk.univ.model.Teacher
 import org.bk.univ.model.TeacherEntity
 import org.bk.univ.repo.TeacherRepo
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.Optional
 import java.util.UUID
@@ -26,13 +23,23 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
         val teacherId = teacher.teacherId
         return if (teacherId != null) {
             teacherRepo.findById(teacherId).map {
+                teacherRepo.save(
+                        TeacherEntity(
+                                teacher.teacherId,
+                                teacher.name,
+                                teacher.department,
+                                teacher.age,
+                                teacher.joinedDate?.let { DateTimeUtils.toDate(it) },
+                                teacher.retirementDate?.let { DateTimeUtils.toDate(it) }
+                        ))
+            }.map { entity ->
                 Teacher(
-                        it.id,
-                        it.name,
-                        it.department,
-                        it.age,
-                        it.joinedDate?.let { DateTimeUtils.toDatetime(it) },
-                        it.retirementDate?.let { DateTimeUtils.toDatetime(it) }
+                        entity.id,
+                        entity.name,
+                        entity.department,
+                        entity.age,
+                        entity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
+                        entity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
                 )
             }
         } else {
