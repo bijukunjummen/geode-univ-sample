@@ -31,8 +31,8 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
                         it.name,
                         it.department,
                         it.age,
-                        Optional.ofNullable(it.joinedDate).map { DateTimeUtils.toDatetime(it) },
-                        Optional.ofNullable(it.retirementDate).map { DateTimeUtils.toDatetime(it) }
+                        it.joinedDate?.let { DateTimeUtils.toDatetime(it) },
+                        it.retirementDate?.let { DateTimeUtils.toDatetime(it) }
                 )
             }
         } else {
@@ -47,39 +47,40 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
                         entity.name,
                         entity.department,
                         entity.age,
-                        Optional.ofNullable(entity.joinedDate).map { DateTimeUtils.toDatetime(it) },
-                        Optional.ofNullable(entity.retirementDate).map{DateTimeUtils.toDatetime(it)}
+                        entity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
+                        entity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
                 )
             }
 
     override fun save(teacher: Teacher): Teacher {
-        teacher.teacherId = UUID.randomUUID().toString()
+        teacher.teacherId = teacher.teacherId?:UUID.randomUUID().toString()
         val savedEntity = teacherRepo.save(
                 TeacherEntity(teacher.teacherId,
                         teacher.name,
                         teacher.department,
                         teacher.age,
-                        teacher.joinedDate.map { DateTimeUtils.toDate(it) }.orElse(null),
-                        teacher.retirementDate.map {DateTimeUtils.toDate(it)}.orElse(null)
+                        teacher.joinedDate?.let { DateTimeUtils.toDate(it) },
+                        teacher.retirementDate?.let { DateTimeUtils.toDate(it) }
                 ))
         return Teacher(savedEntity.id,
                 savedEntity.name,
                 savedEntity.department,
                 savedEntity.age,
-                Optional.ofNullable(savedEntity.joinedDate).map { DateTimeUtils.toDatetime(it) },
-                Optional.ofNullable(savedEntity.retirementDate).map{DateTimeUtils.toDatetime(it)}
+                savedEntity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
+                savedEntity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
         )
     }
 
     override fun findTeachers(page: Pageable): Page<Teacher> {
         val teacherEntities = teacherRepo.findAll()
-        return PageImpl(teacherEntities.map { entity -> 
-            Teacher(entity.id, 
-                    entity.name, 
-                    entity.department, 
+        return PageImpl(teacherEntities.map { entity ->
+            Teacher(entity.id,
+                    entity.name,
+                    entity.department,
                     entity.age,
-                    Optional.ofNullable(entity.joinedDate).map { DateTimeUtils.toDatetime(it) },
-                    Optional.ofNullable(entity.retirementDate).map { DateTimeUtils.toDatetime(it) }
-            ) })
+                    entity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
+                    entity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
+            )
+        })
     }
 }

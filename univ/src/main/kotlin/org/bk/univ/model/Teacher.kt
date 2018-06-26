@@ -8,7 +8,7 @@ data class Teacher (
         var name: String = "",
         var department: String = "",
         var age: Int = 0,
-        var joinedDate: Optional<LocalDateTime> =  Optional.empty(),
-        var retirementDate: Optional<LocalDateTime> = Optional.empty() 
+        var joinedDate: LocalDateTime? =  null,
+        var retirementDate: LocalDateTime? = null 
 ) {
 }
