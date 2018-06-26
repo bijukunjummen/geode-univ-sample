@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Configuration
 class GfDataPopulatorConfig {
     @Bean
-    fun dataPopulator(teacherService: TeacherService, courseService: CourseService): CommandLineRunner = CommandLineRunner { args ->
+    fun dataPopulator(teacherService: TeacherService, courseService: CourseService): CommandLineRunner = CommandLineRunner { _ ->
         for (i in 1..100) {
             val teacherId = "id-$i"
             if (!teacherService.findTeacher(teacherId).isPresent) {

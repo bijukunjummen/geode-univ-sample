@@ -30,7 +30,7 @@ class TeacherController(val teacherService: TeacherService) {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTeacher)
     }
 
-    @RequestMapping(value = "/{teacherId}", method = [RequestMethod.PUT])
+    @RequestMapping(value = ["/{teacherId}"], method = [RequestMethod.PUT])
     fun updateTeacher(@PathVariable("teacherId") teacherId: String, @RequestBody teacher: Teacher): ResponseEntity<Teacher>  {
         val toUpdate = teacher.copy(teacherId = teacherId)
         val savedTeacher = teacherService.update(toUpdate)
@@ -43,7 +43,7 @@ class TeacherController(val teacherService: TeacherService) {
                 .map { teacher -> ResponseEntity.ok(teacher) }
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build())
 
-    @RequestMapping(value="/{teacherId}", method = [RequestMethod.DELETE])
+    @RequestMapping(value= ["/{teacherId}"], method = [RequestMethod.DELETE])
     fun deleteTeacher(@PathVariable("teacherId") teacherId: String): ResponseEntity<*> =
             teacherService.deleteTeacher(teacherId)
                     .map { _ -> ResponseEntity.accepted().body("") }
