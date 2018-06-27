@@ -1,6 +1,7 @@
 package org.bk.univ.config
 
 import org.bk.univ.model.Course
+import org.bk.univ.model.CourseCreateDto
 import org.bk.univ.model.Teacher
 import org.bk.univ.service.CourseService
 import org.bk.univ.service.TeacherService
@@ -24,7 +25,7 @@ class GfDataPopulatorConfig {
                         joinedDate, retirementDate))
                 val courseCode = "code-id-$i"
                 if (!courseService.findById(courseCode).isPresent) {
-                    courseService.saveCourse(Course("code-id-$i", "course-name-$i", "course-description-$i", savedTeacher))
+                    courseService.saveCourse(CourseCreateDto("code-id-$i", "course-name-$i", "course-description-$i", savedTeacher.teacherId))
                 }
             }
         }

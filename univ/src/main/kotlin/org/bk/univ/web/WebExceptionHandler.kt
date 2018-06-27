@@ -17,4 +17,10 @@ class WebExceptionHandler:ResponseEntityExceptionHandler() {
         val vndErrors = VndErrors("Error", ex.message) 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(vndErrors)
     }
+
+    @ExceptionHandler(Exception::class)
+    fun handleGenericException(ex: Exception, request: WebRequest): ResponseEntity<Any> {
+        val vndErrors = VndErrors("Error", ex.message)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(vndErrors)
+    }
 }

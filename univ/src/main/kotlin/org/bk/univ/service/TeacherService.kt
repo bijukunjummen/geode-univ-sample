@@ -2,8 +2,6 @@ package org.bk.univ.service
 
 import io.vavr.control.Try
 import org.bk.univ.model.Teacher
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 interface TeacherService {

@@ -1,10 +1,8 @@
 package org.bk.univ.service
 
 import io.vavr.control.Try
-import org.bk.univ.DateTimeUtils
 import org.bk.univ.exceptions.EntityNotFoundException
 import org.bk.univ.model.Teacher
-import org.bk.univ.model.TeacherEntity
 import org.bk.univ.repo.TeacherRepo
 import org.springframework.stereotype.Service
 import java.util.Optional
@@ -23,24 +21,10 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
         val teacherId = teacher.teacherId
         return if (teacherId != null) {
             teacherRepo.findById(teacherId).map {
-                teacherRepo.save(
-                        TeacherEntity(
-                                teacher.teacherId,
-                                teacher.name,
-                                teacher.department,
-                                teacher.age,
-                                teacher.joinedDate?.let { DateTimeUtils.toDate(it) },
-                                teacher.retirementDate?.let { DateTimeUtils.toDate(it) }
-                        ))
-            }.map { entity ->
-                Teacher(
-                        entity.id,
-                        entity.name,
-                        entity.department,
-                        entity.age,
-                        entity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
-                        entity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
-                )
+                val teacherToSave = teacher.copy(teacherId = it.id)
+                teacherRepo.save(teacherToSave.toEntity())
+            }.map {
+                Teacher.fromEntity(it)
             }
         } else {
             Optional.empty()
@@ -48,46 +32,18 @@ class RepoTeacherService(val teacherRepo: TeacherRepo) : TeacherService {
     }
 
     override fun findTeacher(teacherId: String): Optional<Teacher> =
-            teacherRepo.findById(teacherId).map { entity ->
-                Teacher(
-                        entity.id,
-                        entity.name,
-                        entity.department,
-                        entity.age,
-                        entity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
-                        entity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
-                )
-            }
+            teacherRepo.findById(teacherId).map { Teacher.fromEntity(it) }
 
     override fun save(teacher: Teacher): Teacher {
-        teacher.teacherId = teacher.teacherId ?: UUID.randomUUID().toString()
-        val savedEntity = teacherRepo.save(
-                TeacherEntity(teacher.teacherId,
-                        teacher.name,
-                        teacher.department,
-                        teacher.age,
-                        teacher.joinedDate?.let { DateTimeUtils.toDate(it) },
-                        teacher.retirementDate?.let { DateTimeUtils.toDate(it) }
-                ))
-        return Teacher(savedEntity.id,
-                savedEntity.name,
-                savedEntity.department,
-                savedEntity.age,
-                savedEntity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
-                savedEntity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
-        )
+        val teacherToSave = teacher.copy(teacherId = teacher.teacherId ?: UUID.randomUUID().toString())
+        val savedEntity = teacherRepo.save(teacherToSave.toEntity())
+        return Teacher.fromEntity(savedEntity)
     }
 
     override fun findTeachers(): List<Teacher> {
         val teacherEntities = teacherRepo.findAll()
         return (teacherEntities.map { entity ->
-            Teacher(entity.id,
-                    entity.name,
-                    entity.department,
-                    entity.age,
-                    entity.joinedDate?.let { DateTimeUtils.toDatetime(it) },
-                    entity.retirementDate?.let { DateTimeUtils.toDatetime(it) }
-            )
+            Teacher.fromEntity(entity)
         }).toList()
     }
 }

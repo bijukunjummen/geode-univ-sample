@@ -18,7 +18,6 @@ class TeacherMarshalTest {
     @Test
     fun testMarshalToJson() {
         val teacher = Teacher("teacher-id", "name1", "department1", 25)
-        println(jsonTester.write(teacher))
         assertThat(jsonTester.write(teacher)).isEqualToJson("{\n  \"teacherId\": \"teacher-id\",\n  \"name\": \"name1\",\n  \"department\": \"department1\"\n}")
 
         assertThat(jsonTester
