@@ -57,16 +57,20 @@ http http://localhost:8080/courses course-code="some-code" name="some awesome co
 
 ### Get a Course
 ```bash
-http http://localhost:8080/course/some-code
+http http://localhost:8080/courses/some-code
 ```
 
+### Get Courses by Teacher
+```bash
+http http://localhost:8080/teachers/id-1/courses
+```
 
 ### Update a Course
 ```bash
-http PUT http://localhost:8080/course/some-code name="some updated awesome course" description="some description"
+http PUT http://localhost:8080/courses/some-code name="some updated awesome course" description="some description"
 ```
 
 ### Delete a Course
 ```bash
-http DELETE http://localhost:8080/course/some-code
+http DELETE http://localhost:8080/courses/some-code
 ```

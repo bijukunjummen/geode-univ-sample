@@ -2,11 +2,10 @@ package org.bk.univ
 
 import org.apache.geode.cache.GemFireCache
 import org.apache.geode.cache.client.ClientCache
-import org.apache.geode.cache.query.CqAttributesFactory
 import org.apache.geode.cache.query.CqEvent
 import org.bk.univ.listener.CourseRegionListener
-import org.bk.univ.listener.FluxSinkRegionListener
 import org.bk.univ.listener.TeacherRegionListener
+import org.bk.univ.listener.streamFrom
 import org.bk.univ.model.CourseEntity
 import org.bk.univ.model.TeacherEntity
 import org.springframework.context.annotation.Bean
@@ -63,13 +62,7 @@ class GeodeConfig {
         val query = String.format("SELECT * FROM /teachers")
         val clientCache = gemfireCache as ClientCache
         val queryService = clientCache.queryService
-        val cqA = CqAttributesFactory()
-
-        return Flux.create { fluxSink ->
-            cqA.addCqListener(FluxSinkRegionListener(fluxSink))
-            val cqQuery = queryService.newCq("flux-teacher", query, cqA.create())
-            cqQuery.execute()
-        }
+        return streamFrom(queryService, query, "flux-teacher")
     }
 
     @Bean
@@ -77,12 +70,6 @@ class GeodeConfig {
         val query = String.format("SELECT * FROM /courses")
         val clientCache = gemfireCache as ClientCache
         val queryService = clientCache.queryService
-        val cqA = CqAttributesFactory()
-
-        return Flux.create { fluxSink ->
-            cqA.addCqListener(FluxSinkRegionListener(fluxSink))
-            val cqQuery = queryService.newCq("flux-courses", query, cqA.create())
-            cqQuery.execute()
-        }
+        return streamFrom(queryService, query, "flux-courses")
     }
 }
