@@ -21,7 +21,7 @@ class FluxSinkRegionListenerTest {
     @Test
     @DisplayName("Test creating a flux from listener - Happy Path")
     fun testListenerNoErrors() {
-        val flux: Flux<CqEvent> = Flux.create {fluxSink: FluxSink<CqEvent> ->
+        val flux: Flux<CqEvent> = Flux.create { fluxSink: FluxSink<CqEvent> ->
             val fluxListener = FluxSinkRegionListener(fluxSink)
             val cqEvent1 = mock<CqEvent>()
             val cqEvent2 = mock<CqEvent>()
@@ -40,7 +40,7 @@ class FluxSinkRegionListenerTest {
     @Test
     @DisplayName("Test creating a flux from listener with errors")
     fun testListenerWithErrors() {
-        val flux: Flux<CqEvent> = Flux.create {fluxSink: FluxSink<CqEvent> ->
+        val flux: Flux<CqEvent> = Flux.create { fluxSink: FluxSink<CqEvent> ->
             val fluxListener = FluxSinkRegionListener(fluxSink)
             val cqEvent1 = mock<CqEvent>()
             val cqEvent2 = mock<CqEvent>()
@@ -56,29 +56,30 @@ class FluxSinkRegionListenerTest {
                 .verify(Duration.ofSeconds(10))
     }
 
-//    @Test
-//    @DisplayName("Tests Utility function to create a stream of events")
-//    fun streamFromTest() {
-//
-//        val mockQueryService = mock<QueryService>()
-//        val argumentCaptor: ArgumentCaptor<CqAttributes> = ArgumentCaptor.forClass(CqAttributes::class.java)
-//        val mockCqQuery = mock<CqQuery>()
-//        whenever(mockQueryService.newCq(eq("test-cq"), eq("some query"), argumentCaptor.capture())).thenReturn(mockCqQuery)
-//
-//        val flux = streamFrom("test-cq", "some query", mockQueryService)
-//        flux.subscribe()
-//        val cqAttributes = argumentCaptor.value
-//        val cqListener = cqAttributes.cqListener as FluxSinkRegionListener
-//        cqListener.onEvent(mock())
-//        cqListener.onEvent(mock())
-//        cqListener.close()
-//
-//        StepVerifier
-//                .create(flux)
-//                .expectNextCount(2)
-//                .expectComplete()
-//                .verify(Duration.ofSeconds(10))
-//
-//    }
+    @Test
+    @DisplayName("Tests Utility function to create a stream of events")
+    fun streamFromTest() {
+
+        val mockQueryService = mock<QueryService>()
+        val argumentCaptor: ArgumentCaptor<CqAttributes> = ArgumentCaptor.forClass(CqAttributes::class.java)
+        val mockCqQuery = mock<CqQuery>()
+        whenever(mockQueryService.newCq(eq("test-cq"), eq("some query"), argumentCaptor.capture())).thenReturn(mockCqQuery)
+
+        val flux = streamFrom("test-cq", "some query", mockQueryService)
+        flux.subscribe()
+        val cqAttributes = argumentCaptor.value
+        val cqListener = cqAttributes.cqListener as FluxSinkRegionListener
+
+        StepVerifier
+                .create(flux)
+                .then {
+                    cqListener.onEvent(mock())
+                    cqListener.onEvent(mock())
+                    cqListener.close()
+                }.expectNextCount(2)
+                .expectComplete()
+                .verify(Duration.ofSeconds(3))
+
+    }
 
 }
