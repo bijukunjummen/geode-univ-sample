@@ -26,7 +26,7 @@ import reactor.core.publisher.Flux
 class GeodeConfig {
 
     @Bean
-    fun continuousQueryListenerContainer(gemfireCache: GemFireCache): ContinuousQueryListenerContainer {
+    fun cqContainer(gemfireCache: GemFireCache): ContinuousQueryListenerContainer {
         val container = ContinuousQueryListenerContainer()
         container.setCache(gemfireCache)
         container.setQueryListeners(setOf(teachersQuery(), coursesQuery()))
@@ -62,7 +62,7 @@ class GeodeConfig {
         val query = String.format("SELECT * FROM /teachers")
         val clientCache = gemfireCache as ClientCache
         val queryService = clientCache.queryService
-        return streamFrom(queryService, query, "flux-teacher")
+        return streamFrom("flux-teacher", query, queryService)
     }
 
     @Bean
@@ -70,6 +70,6 @@ class GeodeConfig {
         val query = String.format("SELECT * FROM /courses")
         val clientCache = gemfireCache as ClientCache
         val queryService = clientCache.queryService
-        return streamFrom(queryService, query, "flux-courses")
+        return streamFrom("flux-courses", query, queryService)
     }
 }

@@ -5,7 +5,9 @@ import org.apache.geode.cache.query.CqEvent
 import org.apache.geode.cache.query.QueryService
 import reactor.core.publisher.Flux
 
-fun streamFrom(queryService: QueryService, query: String, cqName: String): Flux<CqEvent> {
+
+//Creates a single publisher that multiple subscribers can listen to
+fun streamFrom(cqName: String, query: String, queryService: QueryService): Flux<CqEvent> {
     val flux: Flux<CqEvent> = Flux.create { fluxSink ->
         val cqA = CqAttributesFactory()
         cqA.addCqListener(FluxSinkRegionListener(fluxSink))
