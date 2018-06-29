@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: geode-univ-sample-service
+  labels:
+    app: geode-univ-sample
+    visualize: "true"
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: geode-univ-sample

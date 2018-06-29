@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: geode-univ-sample-deployment
+  labels:
+    app: geode-univ-sample
+    visualize: "true"
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: geode-univ-sample
+  template:
+    metadata:
+      labels:
+        app: geode-univ-sample
+        version: v1
+        visualize: "true"
+    spec:
+      containers:
+      - name: geode-univ-sample
+        image: geode-univ-sample:0.0.1-SNAPSHOT
+        env:
+        - name: VERSION
+          value: "1.0"
+        - name: JAVA_OPTS
+          value: "-Dspring.data.gemfire.pool.locators=172.17.0.2[10334]"
+#          value: "-Dspring.data.gemfire.pool.locators=wayfaring-cricket-geode-0[10334]"
+        ports:
+        - name: http
+          containerPort: 8080
