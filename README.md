@@ -9,6 +9,7 @@ start server --name=server1 --server-bind-address=127.0.0.1 --bind-address=127.0
 start server --name=server2 --server-bind-address=127.0.0.1 --bind-address=127.0.0.1 --server-port=40405
 create region --name=teachers --type=PARTITION_REDUNDANT_PERSISTENT
 create region --name=courses --type=PARTITION_REDUNDANT_PERSISTENT
+create region --name=students --type=PARTITION_REDUNDANT_PERSISTENT
 ```
 
 

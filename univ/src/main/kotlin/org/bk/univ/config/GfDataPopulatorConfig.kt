@@ -1,7 +1,8 @@
 package org.bk.univ.config
 
-import org.bk.univ.model.Course
+import org.apache.geode.cache.Region
 import org.bk.univ.model.CourseCreateDto
+import org.bk.univ.model.StudentEntity
 import org.bk.univ.model.Teacher
 import org.bk.univ.service.CourseService
 import org.bk.univ.service.TeacherService
@@ -13,7 +14,7 @@ import java.time.LocalDateTime
 @Configuration
 class GfDataPopulatorConfig {
     @Bean
-    fun dataPopulator(teacherService: TeacherService, courseService: CourseService): CommandLineRunner = CommandLineRunner { _ ->
+    fun dataPopulator(teacherService: TeacherService, courseService: CourseService, studentRegion: Region<String, StudentEntity>): CommandLineRunner = CommandLineRunner { _ ->
         for (i in 1..100) {
             val teacherId = "id-$i"
             if (!teacherService.findTeacher(teacherId).isPresent) {
@@ -29,5 +30,11 @@ class GfDataPopulatorConfig {
                 }
             }
         }
+
+        studentRegion.put("1", StudentEntity("1", "student-1"))
+        studentRegion.put("2", StudentEntity("2", "student-2"))
+        studentRegion.put("3", StudentEntity("3", "student-3"))
+
+
     }
 }

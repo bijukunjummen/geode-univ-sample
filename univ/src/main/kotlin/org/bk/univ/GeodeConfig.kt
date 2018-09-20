@@ -1,12 +1,15 @@
 package org.bk.univ
 
 import org.apache.geode.cache.GemFireCache
+import org.apache.geode.cache.Region
 import org.apache.geode.cache.client.ClientCache
+import org.apache.geode.cache.client.ClientRegionShortcut
 import org.apache.geode.cache.query.CqEvent
 import org.bk.univ.listener.CourseRegionListener
 import org.bk.univ.listener.TeacherRegionListener
 import org.bk.univ.listener.streamFrom
 import org.bk.univ.model.CourseEntity
+import org.bk.univ.model.StudentEntity
 import org.bk.univ.model.TeacherEntity
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,6 +20,7 @@ import org.springframework.data.gemfire.listener.ContinuousQueryDefinition
 import org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer
 import org.springframework.data.gemfire.repository.config.EnableGemfireRepositories
 import reactor.core.publisher.Flux
+
 
 @Configuration
 @ClientCacheApplication(subscriptionEnabled = true)
@@ -71,5 +75,11 @@ class GeodeConfig {
         val clientCache = gemfireCache as ClientCache
         val queryService = clientCache.queryService
         return streamFrom("flux-courses", query, queryService)
+    }
+
+    @Bean
+    fun studentRegion(clientCache: ClientCache): Region<String, StudentEntity> {
+        val r: Region<String, StudentEntity> = clientCache.createClientRegionFactory<String, StudentEntity>(ClientRegionShortcut.PROXY).create("students")
+        return r
     }
 }
